@@ -1,0 +1,262 @@
+% !TEX program = pdflatex
+%
+% cv-sablonu.tex — Burak Eltaş Executive CV şablonu
+%
+% Bu dosya `apply` becerisi tarafından her başvuru için kopyalanıp
+% düzenlenir. Sabit kalması gereken alanlar (deneyim, eğitim, sertifikalar,
+% ödüller) `profil.md` ile birebir eşleşmelidir — oradaki olgusal içerik
+% burada değiştirilmez. İlana göre kişiselleştirilebilecek alanlar:
+% - \profilOzet (Profesyonel Özet metni) ve \hedefUnvan (başlık altı
+%   unvan) komutları — dosyanın "İLANA GÖRE KİŞİSELLEŞTİRİLECEK ALANLAR"
+%   bölümünde işaretlenmiştir.
+% - Sidebar'daki YETKİNLİKLER listesinin sırası (madde eklemeden/
+%   çıkarmadan, `profil.md` ile aynı küme kalacak şekilde).
+%
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[left=0cm,right=0cm,top=0cm,bottom=0cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% Not: babel[turkish] kasıtlı olarak KULLANILMIYOR. babel[turkish] +
+% hyperref + enumitem birlikte yüklendiğinde, ikinci ve sonraki özel
+% (renkli işaretli) itemize ortamında "Missing \endcsname inserted"
+% derleme hatası oluşuyor (doğrulanmış paket çakışması). utf8+T1 Türkçe
+% karakterleri (ç, ğ, ı, İ, ö, ş, ü) doğru basmaya yeterli; kaybedilen tek
+% şey Türkçe heceleme kurallarıdır ki kısa CV madde metinlerinde önemsizdir.
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{paracol}
+\usepackage{enumitem}
+\usepackage{changepage}
+\usepackage{eso-pic}
+\usepackage{hyperref}
+
+% ---------------------------------------------------------------------
+% Renkler (kaynak CV'deki lacivert / turuncu vurgu paleti)
+% ---------------------------------------------------------------------
+\definecolor{sidebarbg}{HTML}{1B2A4A}
+\definecolor{accent}{HTML}{C9862F}
+\definecolor{darktext}{HTML}{1B2A4A}
+\definecolor{bodytext}{HTML}{2E2E2E}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\hypersetup{colorlinks=true, urlcolor=accent, linkcolor=accent}
+
+% Sol sütunun lacivert zemini: sabit boyutlu bir kutu/minipage İÇİNE
+% sarmak yerine (bu, taşan içeriği ikinci sayfaya akıtmak yerine
+% SESSİZCE KESER — doğrulanmış hata), her sayfanın arkasına eso-pic ile
+% bağımsız bir dikdörtgen çiziyoruz. Böylece paracol sütunları normal
+% şekilde sayfa sonunda bölünebilir. NOT: Bant her sayfada TAM sayfa
+% yüksekliğinde çizilir; sidebar içeriği bir sayfada erken biterse
+% (ör. 2. sayfa) bandın geri kalanı sade dekoratif kalır — kaynak
+% tasarımdaki organik/değişken bant yüksekliği yerine kasıtlı bir
+% sadeleştirmedir.
+\AddToShipoutPictureBG{%
+  \AtPageUpperLeft{\color{sidebarbg}\rule[-\paperheight]{0.32\paperwidth}{\paperheight}}%
+}
+
+% ---------------------------------------------------------------------
+% ==> İLANA GÖRE KİŞİSELLEŞTİRİLECEK ALANLAR (apply becerisi tarafından) <==
+% ---------------------------------------------------------------------
+
+% Profesyonel Özet: hedef ilana göre 2-4 cümleye kısaltılabilir / anahtar
+% kelime vurgusu değiştirilebilir. Olgusal rakamlar (17 yıl, 500.000+
+% kullanıcı, 150+ kişi) değiştirilmez.
+\newcommand{\profilOzet}{%
+Çağrı merkezi operasyonları, outsource tedarikçi yönetimi ve müşteri
+deneyimi alanlarında 17 yılı aşkın deneyime sahibim. Telekomünikasyon ve
+fintech sektörlerinde, 500.000'den fazla aktif kullanıcıya hizmet veren
+büyük ölçekli operasyonları yönettim. KPI/SLA yapılandırması, AI destekli
+IVR ve dijital iletişim kanalları projelerinde uçtan uca sorumluluk
+üstlendim; çok tedarikçili ekosistemlerde 150'den fazla kişilik operasyonel
+kadroların yönetiminde görev aldım. Veri odaklı karar alma, süreç
+iyileştirme ve kalite yönetimi alanlarında uzmanım.%
+}
+
+% Hedef unvan: ilana göre güncellenebilir (ör. "Customer Experience
+% Director" ilanı için başlık buna göre uyarlanabilir), ancak
+% profil.md'deki gerçek unvan geçmişiyle çelişmemelidir.
+\newcommand{\hedefUnvan}{Customer Experience \& Contact Center Operations Manager}
+
+% ---------------------------------------------------------------------
+% Yardımcı komutlar
+% ---------------------------------------------------------------------
+\newcommand{\sidebarSection}[1]{%
+  \vspace{10pt}
+  {\color{accent}\bfseries\fontsize{10}{12}\selectfont #1}\\[2pt]
+  {\color{white!40!sidebarbg}\rule{\linewidth}{0.4pt}}\\[4pt]
+}
+
+\newcommand{\sidebarItem}[1]{{\color{white}\small $\triangleright$~#1}\par\vspace{2pt}}
+
+\newcommand{\mainSection}[1]{%
+  \vspace{8pt}
+  {\color{darktext}\bfseries\fontsize{12}{14}\selectfont #1}\\
+  {\color{accent}\rule{\linewidth}{1pt}}\\[4pt]
+}
+
+\newcommand{\job}[4]{%
+  % #1 = unvan, #2 = şirket, #3 = tarih aralığı, #4 = madde listesi (itemize içi)
+  {\color{darktext}\bfseries #1}\\
+  {\color{accent}\itshape #2 \hfill #3}\\[2pt]
+  \begin{itemize}[leftmargin=12pt,itemsep=1pt,topsep=2pt,label=\textcolor{accent}{$\blacktriangleright$}]
+  #4
+  \end{itemize}
+  \vspace{4pt}
+}
+
+\begin{document}
+
+\columnratio{0.32}
+\begin{paracol}{2}
+
+% =======================================================================
+% SOL SÜTUN — SIDEBAR
+% =======================================================================
+\begin{leftcolumn}
+\color{white}
+\begin{adjustwidth}{14pt}{10pt}
+\vspace*{24pt}
+
+\sidebarSection{İLETİŞİM}
+\sidebarItem{İstanbul, Türkiye}
+\sidebarItem{+90 532 555 32 80}
+\sidebarItem{eltas.burak@gmail.com}
+\sidebarItem{\href{https://linkedin.com/in/burakeltas}{linkedin.com/in/burakeltas}}
+
+\sidebarSection{YETKİNLİKLER}
+% ==> apply becerisi bu listeyi ilanın anahtar kelimelerine göre
+%     yeniden sıralayabilir; madde eklemez/çıkarmaz (profil.md ile eşleşmeli).
+\sidebarItem{Customer Experience Management}
+\sidebarItem{Contact Center Operations}
+\sidebarItem{Outsource Vendor Management}
+\sidebarItem{CRM Strategy \& Execution}
+\sidebarItem{SLA \& KPI Management}
+\sidebarItem{Process Improvement}
+\sidebarItem{Operational Excellence}
+\sidebarItem{Quality Assurance \& Audit}
+\sidebarItem{Team Leadership (150+)}
+\sidebarItem{Performance Analytics}
+\sidebarItem{AI-Supported IVR / Digital Channels}
+\sidebarItem{Capacity Planning}
+\sidebarItem{Vendor Budget Management}
+\sidebarItem{Eğitim Tasarımı (Train the Trainer)}
+
+\sidebarSection{DİLLER}
+\sidebarItem{Türkçe --- Ana Dil}
+\sidebarItem{İngilizce --- Temel}
+
+\sidebarSection{EĞİTİM}
+{\color{white}\small\bfseries Lisans --- İşletme}\\
+{\color{white!85!black}\small Anadolu Üniversitesi}\\
+{\color{white!70!black}\small 2013 -- 2016}\\[6pt]
+{\color{white}\small\bfseries Ön Lisans --- Bilgisayar Teknolojisi ve Programlama}\\
+{\color{white!85!black}\small Çanakkale Onsekiz Mart Üniversitesi}\\
+{\color{white!70!black}\small 2006 -- 2008}
+
+\sidebarSection{ÖDÜLLER}
+{\color{white}\small\bfseries Süper İş Ödülü}\\
+{\color{white!85!black}\small Turkcell Global Bilgi \textbar\ 2013}\\
+{\color{white!70!black}\small Üstün başarı performansı ile sertifikalı kurumsal ödül.}
+
+\sidebarSection{SERTİFİKALAR}
+\sidebarItem{Eğitimcinin Eğitimi --- BNB Training}
+\sidebarItem{Temel Liderlik Becerileri --- Turkcell Akademi}
+\sidebarItem{Temel Proje Yönetimi --- Turkcell Akademi}
+\sidebarItem{Kök Neden Analizi --- Turkcell Akademi}
+\sidebarItem{İş Süreçleri Yönetimi --- İst. İşletme Enst.}
+\sidebarItem{ISO 9001 Kalite Yönetim Sistemi}
+\sidebarItem{Müşteri İlişkileri Yönetimi}
+
+\sidebarSection{DİĞER}
+\sidebarItem{Kurumsal Müşteri Yönetimi}
+\sidebarItem{İkna ve Müzakere Becerileri}
+\sidebarItem{MS Office İleri Düzey (Excel, PPT, Word)}
+
+\sidebarSection{GÖNÜLLÜ FAALİYET}
+{\color{white}\small\bfseries Genç TEMA Üyesi}\\
+{\color{white!85!black}\small Genç TEMA Topluluğu \textbar\ 2014 -- 2026}\\
+{\color{white!70!black}\small TEMA Vakfı projelerinde aktif görev.}
+
+\vspace{20pt}
+\end{adjustwidth}
+\end{leftcolumn}
+
+% =======================================================================
+% SAĞ SÜTUN — ANA İÇERİK
+% =======================================================================
+\begin{rightcolumn}
+\begin{adjustwidth}{18pt}{12pt}
+\vspace*{24pt}
+
+{\color{darktext}\bfseries\fontsize{22}{24}\selectfont BURAK ELTAŞ}\\[2pt]
+{\color{accent}\fontsize{12}{14}\selectfont \hedefUnvan}
+
+\mainSection{PROFESYONEL ÖZET}
+{\small\color{bodytext}\profilOzet}
+
+\mainSection{PROFESYONEL DENEYİM}
+
+\job{Dış Kaynak Yöneticisi}{Paribu Teknoloji A.Ş.}{2025 -- 2026}{%
+\item 500.000'den fazla aktif fintech kullanıcısına hizmet veren outsource çağrı merkezi ekosisteminin uçtan uca koordinasyonunu yönettim.
+\item Çok tedarikçili yapıda ortak bir performans skorlama ve raporlama sistemi kurarak tedarikçi değerlendirme süreçlerini standardize ettim.
+\item AI destekli IVR ve dijital iletişim kanalı entegrasyon projelerini yöneterek self-servis kullanımını artırmaya yönelik dönüşümü hayata geçirdim.
+\item Tedarikçi maliyet yapısını ve sözleşme koşullarını yeniden yapılandırarak bütçe disiplini ve maliyet optimizasyonu sağladım.
+}
+
+\job{Müşteri Hizmetleri Yöneticisi}{Paribu Teknoloji A.Ş.}{2020 -- 2025}{%
+\item 5 outsource tedarikçi ve 150'den fazla operasyonel personelden oluşan müşteri hizmetleri ekosistemini yönettim.
+\item KPI setlerini sıfırdan tasarladım; aylık performans denetimlerini ve SLA takip mekanizmalarını kurumsallaştırdım.
+\item Outsource operasyon bütçesini ve aylık fatura mutabakat süreçlerini yöneterek finansal kontrol düzenini kurdum.
+\item Kapasite planlama modeli oluşturarak yoğun dönemlerde hizmet sürekliliğini ve müşteri memnuniyetini güvence altına aldım.
+\item Süreç iyileştirme ve kalite izleme projeleri yürüterek operasyonel verimlilik ve hizmet kalitesinde sürdürülebilir gelişim sağladım.
+}
+
+\job{Çağrı Merkezi Takım Lideri}{Turkcell Global Bilgi}{2017 -- 2019}{%
+\item Home-agent ve sahada görev yapan 40'tan fazla kişilik ekibin işe alım, eğitim ve performans yönetimini yürüttüm.
+\item Koçluk ve geri bildirim programları tasarlayarak çalışan bağlılığını ve ekip devamlılığını güçlendirdim.
+\item Müşteri deneyimi sapma analizleri yürüterek ilk aramada çözüm (FCR) süreçlerinin iyileştirilmesine liderlik ettim.
+}
+
+\job{Kalite Geliştirme Uzmanı}{Turkcell Global Bilgi}{2013 -- 2017}{%
+\item Finans projeleri kapsamında aylık 8.000'den fazla çağrının kalite analiz sürecini yönettim.
+\item Müşteri temsilcilerine yönelik eğitim içerikleri tasarladım ve uyguladım.
+\item Gizli müşteri (mystery shopping) ve kalibrasyon programları kurarak segment bazlı kalite ölçümünü standardize ettim.
+\item Kök neden analizine dayalı şikâyet yönetimi yaklaşımıyla tekrarlayan şikâyetlerin önlenmesine yönelik aksiyon planlarını yürüttüm.
+}
+
+\job{Eğitim ve Kalite Sorumlusu}{Koç Sistem / Callus Çağrı Merkezi}{2010 -- 2012}{%
+\item Aygaz, Vodafone, Yapı Kredi, Ford, Opet ve Dell projelerinin 7/24 inbound ve outbound operasyonlarında kalite standartlarını yönettim.
+\item İşe alım mülakatlarını kalite kriterleri bazında yapılandırarak yeni temsilcilerin adaptasyon süreçlerini hızlandırdım.
+\item Düşük performanslı projelerde acil aksiyon planları devreye alarak performans toparlanma süreçlerini yönettim.
+}
+
+\job{Çağrı Merkezi Müşteri Temsilcisi}{Koç Sistem / Callus Çağrı Merkezi}{2010}{%
+\item Vodafone inbound/outbound operasyonlarında görev aldım; gösterdiğim performansla 9 ay içinde Eğitim ve Kalite Sorumlusu pozisyonuna terfi ettim.
+}
+
+\job{Kurumsal Satış Sorumlusu}{Avea Telekomünikasyon A.Ş.}{2008 -- 2010}{%
+\item Kurumsal müşteri portföyü geliştirme ve bölge bazlı yeni müşteri kazanımı çalışmalarını yürüttüm.
+\item Türk Telekom ortak satış projelerinde görev aldım; bayi denetim ve eğitim programlarıyla satış kanalı süreçlerini standardize ettim.
+}
+
+\mainSection{ANAHTAR BAŞARILAR}
+\small
+\begin{itemize}[leftmargin=12pt,itemsep=2pt,topsep=2pt,label=\textcolor{accent}{$\blacktriangleright$}]
+\item 500.000+ aktif kullanıcıya hizmet veren outsource operasyon ekosisteminin uçtan uca yönetimi
+\item 5 tedarikçi ve 150+ kişilik çok-vendorlu kadronun liderliği
+\item AI destekli IVR ve dijital kanal dönüşüm projelerinin hayata geçirilmesi
+\item KPI/SLA yapısının sıfırdan kurulması ve kurumsallaştırılması
+\item Süper İş Ödülü --- Turkcell Global Bilgi (2013)
+\end{itemize}
+
+\vspace{16pt}
+{\small\color{black!60} Burak Eltaş \textperiodcentered\ Executive CV}
+
+\end{adjustwidth}
+\end{rightcolumn}
+
+\end{paracol}
+\end{document}
